@@ -182,6 +182,9 @@ importers:
       '@rollup/plugin-node-resolve':
         specifier: ^16.0.0
         version: 16.0.0(rollup@4.30.1)
+      hono:
+        specifier: ^4.7.6
+        version: 4.7.6
       rollup:
         specifier: ^4.9.5
         version: 4.30.1
@@ -306,7 +309,7 @@ importers:
     dependencies:
       '@sveltejs/kit':
         specifier: ^1.0.0 || ^2.0.0
-        version: link:../kit
+        version: 2.20.6(@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1)))(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1))
     devDependencies:
       typescript:
         specifier: ^5.3.3
@@ -1853,6 +1856,15 @@ packages:
       typescript: '>= 5'
       typescript-eslint: '>= 7.5'
 
+  '@sveltejs/kit@2.20.6':
+    resolution: {integrity: sha512-ImUkSQ//Xf4N9r0HHAe5vRA7RyQ7U1Ue1YUT235Ig+IiIqbsixEulHTHrP5LtBiC8xOkJoPZQ1VZ/nWHNOaGGw==}
+    engines: {node: '>=18.13'}
+    hasBin: true
+    peerDependencies:
+      '@sveltejs/vite-plugin-svelte': ^3.0.0 || ^4.0.0-next.1 || ^5.0.0
+      svelte: ^4.0.0 || ^5.0.0-next.0
+      vite: ^5.0.3 || ^6.0.0
+
   '@sveltejs/vite-plugin-svelte-inspector@4.0.1':
     resolution: {integrity: sha512-J/Nmb2Q2y7mck2hyCX4ckVHcR5tu2J+MtBEQqpDrrgELZ2uvraQcK/ioCV61AqkdXFgriksOKIceDcQmqnGhVw==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22}
@@ -2550,6 +2562,10 @@ packages:
   hasown@2.0.2:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
+
+  hono@4.7.6:
+    resolution: {integrity: sha512-564rVzELU+9BRqqx5k8sT2NFwGD3I3Vifdb6P7CmM6FiarOSY+fDC+6B+k9wcCb86ReoayteZP2ki0cRLN1jbw==}
+    engines: {node: '>=16.9.0'}
 
   https-proxy-agent@7.0.6:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
@@ -4157,6 +4173,23 @@ snapshots:
       typescript: 5.6.3
       typescript-eslint: 8.26.0(eslint@9.6.0)(typescript@5.6.3)
 
+  '@sveltejs/kit@2.20.6(@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1)))(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1))':
+    dependencies:
+      '@sveltejs/vite-plugin-svelte': 5.0.1(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1))
+      '@types/cookie': 0.6.0
+      cookie: 0.6.0
+      devalue: 5.1.0
+      esm-env: 1.2.2
+      import-meta-resolve: 4.1.0
+      kleur: 4.1.5
+      magic-string: 0.30.17
+      mrmime: 2.0.0
+      sade: 1.8.1
+      set-cookie-parser: 2.6.0
+      sirv: 3.0.0
+      svelte: 5.23.1
+      vite: 6.0.11(@types/node@18.19.50)(lightningcss@1.24.1)
+
   '@sveltejs/vite-plugin-svelte-inspector@4.0.1(@sveltejs/vite-plugin-svelte@5.0.1(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1)))(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1))':
     dependencies:
       '@sveltejs/vite-plugin-svelte': 5.0.1(svelte@5.23.1)(vite@6.0.11(@types/node@18.19.50)(lightningcss@1.24.1))
@@ -4927,6 +4960,8 @@ snapshots:
   hasown@2.0.2:
     dependencies:
       function-bind: 1.1.2
+
+  hono@4.7.6: {}
 
   https-proxy-agent@7.0.6:
     dependencies:
