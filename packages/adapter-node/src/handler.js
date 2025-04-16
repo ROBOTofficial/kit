@@ -10,6 +10,12 @@ import { Server } from 'SERVER';
 import { manifest, prerendered, base } from 'MANIFEST';
 import { env } from 'ENV';
 import { parse_as_bytes } from '../utils.js';
+import { serveStatic } from '@hono/node-server/serve-static';
+
+/**
+ * @typedef {import('hono').MiddlewareHandler<{ Bindings: import('@hono/node-server').HttpBindings }>} HonoMiddleware
+ * @typedef {Array<HonoMiddleware>} HonoMiddlewares
+ */
 
 /* global ENV_PREFIX */
 
@@ -38,6 +44,58 @@ await server.init({
 	env: process.env,
 	read: (file) => createReadableStream(`${asset_dir}/${file}`)
 });
+
+/**
+ *
+ * @param {Request} request
+ * @param {import('http').IncomingMessage} req
+ */
+async function create_server_responsed(request, req) {
+	return await server.respond(request, {
+		platform: { req },
+		getClientAddress: () => {
+			if (address_header) {
+				if (!(address_header in req.headers)) {
+					throw new Error(
+						`Address header was specified with ${
+							ENV_PREFIX + 'ADDRESS_HEADER'
+						}=${address_header} but is absent from request`
+					);
+				}
+
+				const value = /** @type {string} */ (req.headers[address_header]) || '';
+
+				if (address_header === 'x-forwarded-for') {
+					const addresses = value.split(',');
+
+					if (xff_depth < 1) {
+						throw new Error(`${ENV_PREFIX + 'XFF_DEPTH'} must be a positive integer`);
+					}
+
+					if (xff_depth > addresses.length) {
+						throw new Error(
+							`${ENV_PREFIX + 'XFF_DEPTH'} is ${xff_depth}, but only found ${
+								addresses.length
+							} addresses`
+						);
+					}
+					return addresses[addresses.length - xff_depth].trim();
+				}
+
+				return value;
+			}
+
+			return (
+				req.connection?.remoteAddress ||
+				// @ts-expect-error
+				req.connection?.socket?.remoteAddress ||
+				req.socket?.remoteAddress ||
+				// @ts-expect-error
+				req.info?.remoteAddress
+			);
+		}
+	});
+}
 
 /**
  * @param {string} path
@@ -108,53 +166,7 @@ const ssr = async (req, res) => {
 		return;
 	}
 
-	await setResponse(
-		res,
-		await server.respond(request, {
-			platform: { req },
-			getClientAddress: () => {
-				if (address_header) {
-					if (!(address_header in req.headers)) {
-						throw new Error(
-							`Address header was specified with ${
-								ENV_PREFIX + 'ADDRESS_HEADER'
-							}=${address_header} but is absent from request`
-						);
-					}
-
-					const value = /** @type {string} */ (req.headers[address_header]) || '';
-
-					if (address_header === 'x-forwarded-for') {
-						const addresses = value.split(',');
-
-						if (xff_depth < 1) {
-							throw new Error(`${ENV_PREFIX + 'XFF_DEPTH'} must be a positive integer`);
-						}
-
-						if (xff_depth > addresses.length) {
-							throw new Error(
-								`${ENV_PREFIX + 'XFF_DEPTH'} is ${xff_depth}, but only found ${
-									addresses.length
-								} addresses`
-							);
-						}
-						return addresses[addresses.length - xff_depth].trim();
-					}
-
-					return value;
-				}
-
-				return (
-					req.connection?.remoteAddress ||
-					// @ts-expect-error
-					req.connection?.socket?.remoteAddress ||
-					req.socket?.remoteAddress ||
-					// @ts-expect-error
-					req.info?.remoteAddress
-				);
-			}
-		})
-	);
+	await setResponse(res, await create_server_responsed(request, req));
 };
 
 /** @param {import('polka').Middleware[]} handlers */
@@ -200,3 +212,69 @@ export const handler = sequence(
 		ssr
 	].filter(Boolean)
 );
+
+/** @returns {HonoMiddlewares} */
+export const honoHandler = () => {
+	/** @type {HonoMiddlewares} */
+	const middlewares = [];
+	const paths = [
+		{
+			path: path.join(dir, 'client'),
+			client: true
+		},
+		{
+			path: path.join(dir, 'static'),
+			client: false
+		}
+	];
+
+	for (const { path, client } of paths) {
+		if (fs.existsSync(path)) {
+			middlewares.push(
+				serveStatic({
+					root: path,
+					onFound(path, c) {
+						if (client && path.startsWith(`/${manifest.appPath}/immutable/`)) {
+							c.res.headers.append('cache-control', 'public,max-age=31536000,immutable');
+						}
+					}
+				})
+			);
+		}
+	}
+
+	const prerenderedHandler = serveStatic({ root: path.join(dir, 'prerendered') });
+
+	middlewares.push(
+		async (c, next) => {
+			const req = c.env.incoming;
+			let { pathname, search, query } = polka_url_parser(req);
+
+			try {
+				pathname = decodeURIComponent(pathname);
+			} catch {
+				// ignore invalid URI
+			}
+
+			if (prerendered.has(pathname)) {
+				return await prerenderedHandler(c, next);
+			}
+
+			let location = pathname.at(-1) === '/' ? pathname.slice(0, -1) : pathname + '/';
+			if (prerendered.has(location)) {
+				if (query) location += search;
+				return c.redirect(location, 308);
+			} else {
+				await next();
+			}
+		},
+		async (c) => {
+			const request = c.req.raw;
+			const req = c.env.incoming;
+
+			return await create_server_responsed(request, req);
+		}
+	);
+
+	return middlewares;
+};

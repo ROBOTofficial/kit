@@ -173,6 +173,12 @@ importers:
 
   packages/adapter-node:
     dependencies:
+      '@hono/node-server':
+        specifier: ^1.14.1
+        version: 1.14.1(hono@4.7.6)
+      '@playwright/test':
+        specifier: ^1.44.1
+        version: 1.44.1
       '@rollup/plugin-commonjs':
         specifier: ^28.0.1
         version: 28.0.1(rollup@4.30.1)
@@ -1503,6 +1509,12 @@ packages:
 
   '@fontsource/libre-barcode-128-text@5.1.0':
     resolution: {integrity: sha512-MC7foQFRT0NDcsqBWQua2T3gs/fh/uTowTxfoPqGQWjqroiMxRZhQh7jerjnpcI+Xi3yR5bwCo6W2uwCza1FRw==}
+
+  '@hono/node-server@1.14.1':
+    resolution: {integrity: sha512-vmbuM+HPinjWzPe7FFPWMMQMsbKE9gDPhaH0FFdqbGpkT5lp++tcWDTxwBl5EgS5y6JVgIaCdjeHRfQ4XRBRjQ==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@humanwhocodes/module-importer@1.0.1':
     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
@@ -3872,6 +3884,10 @@ snapshots:
   '@fastify/busboy@2.1.1': {}
 
   '@fontsource/libre-barcode-128-text@5.1.0': {}
+
+  '@hono/node-server@1.14.1(hono@4.7.6)':
+    dependencies:
+      hono: 4.7.6
 
   '@humanwhocodes/module-importer@1.0.1': {}
 

@@ -52,6 +52,8 @@
 		"vitest": "^3.0.1"
 	},
 	"dependencies": {
+		"@hono/node-server": "^1.14.1",
+		"@playwright/test": "^1.44.1",
 		"@rollup/plugin-commonjs": "^28.0.1",
 		"@rollup/plugin-json": "^6.1.0",
 		"@rollup/plugin-node-resolve": "^16.0.0",
