@@ -33,6 +33,7 @@ export default [
 			'packages/adapter-cloudflare/test/apps/**/*',
 			'packages/adapter-node/rollup.config.js',
 			'packages/adapter-node/tests/smoke.spec_disabled.js',
+			'packages/adapter-node/tests/apps/**/*',
 			'packages/adapter-static/test/apps/**/*',
 			'packages/create-svelte/shared/**/*',
 			'packages/create-svelte/templates/**/*',
