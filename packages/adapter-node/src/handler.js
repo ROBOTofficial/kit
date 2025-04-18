@@ -13,7 +13,7 @@ import { parse_as_bytes } from '../utils.js';
 import { serveStatic } from '@hono/node-server/serve-static';
 
 /**
- * @typedef {import('hono').MiddlewareHandler<{ Bindings: import('@hono/node-server').HttpBindings }>} HonoMiddleware
+ * @typedef {import('hono').MiddlewareHandler<{ Bindings: import("@hono/node-server").HttpBindings; }, string, {}>} HonoMiddleware
  * @typedef {Array<HonoMiddleware>} HonoMiddlewares
  */
 
